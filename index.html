@@ -3,45 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=https://linked-technical-sublime-champion.trycloudflare.com">
+  <meta http-equiv="Cache-Control" content="no-store">
   <title>Ashwake</title>
   <style>
     html, body { min-height: 100%; margin: 0; background: #050608; color: #f4efe4;
       font-family: Georgia, "Times New Roman", serif; }
     main { min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 1rem; padding: 1.5rem; text-align: center; }
-    h1 { font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; font-size: 2rem; }
-    a { color: #c9a227; }
-    .muted { color: rgba(244,239,228,0.7); }
+      justify-content: center; gap: 1.25rem; padding: 1.5rem; text-align: center; }
+    h1 { font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; font-size: 2rem; margin: 0; }
+    a.play { display: inline-flex; min-height: 48px; min-width: 176px; align-items: center;
+      justify-content: center; border-radius: 6px; border: 1px solid #c9a227; background: #c9a227;
+      color: #1a1408; text-decoration: none; font-size: 15px; letter-spacing: 0.04em; }
+    .muted { color: rgba(244,239,228,0.7); margin: 0; }
   </style>
 </head>
 <body>
   <main>
     <h1>Ashwake</h1>
-    <p id="status" class="muted">Opening the game…</p>
-    <p><a id="continue" href="https://linked-technical-sublime-champion.trycloudflare.com">Continue</a></p>
+    <p class="muted">Tap Play if the game does not open.</p>
+    <a class="play" href="https://linked-technical-sublime-champion.trycloudflare.com" rel="noreferrer">Play</a>
   </main>
-  <script>
-    const fallback = "https://linked-technical-sublime-champion.trycloudflare.com";
-    const api = "https://api.github.com/repos/alexsimeonoww/ashwake-play/contents/url.txt";
-    async function liveUrl() {
-      try {
-        const res = await fetch(api, {
-          cache: "no-store",
-          headers: { Accept: "application/vnd.github.raw" },
-        });
-        if (res.ok) {
-          const text = (await res.text()).trim();
-          if (/^https:\/\/[a-z0-9.-]+/i.test(text)) return text;
-        }
-      } catch {}
-      return fallback;
-    }
-    liveUrl().then((next) => {
-      document.getElementById("continue").href = next;
-      location.replace(next);
-    }).catch(() => {
-      document.getElementById("status").textContent = "Tap Continue to play.";
-    });
-  </script>
+  <script>location.replace("https://linked-technical-sublime-champion.trycloudflare.com");</script>
 </body>
 </html>
