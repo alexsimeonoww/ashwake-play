@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ashwake</title>
+  <style>
+    html, body { min-height: 100%; margin: 0; background: #050608; color: #f4efe4;
+      font-family: Georgia, "Times New Roman", serif; }
+    main { min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 1rem; padding: 1.5rem; text-align: center; }
+    h1 { font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; font-size: 2rem; }
+    a { color: #c9a227; }
+    .muted { color: rgba(244,239,228,0.7); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Ashwake</h1>
+    <p id="status" class="muted">Opening the game…</p>
+    <p><a id="continue" href="https://linked-technical-sublime-champion.trycloudflare.com">Continue</a></p>
+  </main>
+  <script>
+    const fallback = "https://linked-technical-sublime-champion.trycloudflare.com";
+    const api = "https://api.github.com/repos/alexsimeonoww/ashwake-play/contents/url.txt";
+    async function liveUrl() {
+      try {
+        const res = await fetch(api, {
+          cache: "no-store",
+          headers: { Accept: "application/vnd.github.raw" },
+        });
+        if (res.ok) {
+          const text = (await res.text()).trim();
+          if (/^https:\/\/[a-z0-9.-]+/i.test(text)) return text;
+        }
+      } catch {}
+      return fallback;
+    }
+    liveUrl().then((next) => {
+      document.getElementById("continue").href = next;
+      location.replace(next);
+    }).catch(() => {
+      document.getElementById("status").textContent = "Tap Continue to play.";
+    });
+  </script>
+</body>
+</html>
