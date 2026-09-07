@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=https://midlands-wolf-taste-disciplines.trycloudflare.com">
   <meta http-equiv="Cache-Control" content="no-store">
   <title>Ashwake</title>
   <style>
@@ -15,15 +14,43 @@
     a.play { display: inline-flex; min-height: 48px; min-width: 176px; align-items: center;
       justify-content: center; border-radius: 6px; border: 1px solid #c9a227; background: #c9a227;
       color: #1a1408; text-decoration: none; font-size: 15px; letter-spacing: 0.04em; }
-    .muted { color: rgba(244,239,228,0.7); margin: 0; }
+    a.alt { color: #c9a227; }
+    .muted { color: rgba(244,239,228,0.7); margin: 0; max-width: 28rem; }
+    a.alt[hidden] { display: none; }
   </style>
 </head>
 <body>
   <main>
     <h1>Ashwake</h1>
-    <p class="muted">Tap Play if the game does not open.</p>
-    <a class="play" href="https://midlands-wolf-taste-disciplines.trycloudflare.com" rel="noreferrer">Play</a>
+    <p class="muted">Tap Play. Keep this GitHub page — do not bookmark the next URL.</p>
+    <a id="play" class="play" href="https://midlands-wolf-taste-disciplines.trycloudflare.com" rel="noreferrer">Play</a>
+    <a id="alt" class="alt" hidden rel="noreferrer">If Play fails, tap this</a>
   </main>
-  <script>location.replace("https://midlands-wolf-taste-disciplines.trycloudflare.com");</script>
+  <script>
+    const fallback = "https://midlands-wolf-taste-disciplines.trycloudflare.com";
+    const ok = (s) => /^https:\/\/[a-z0-9.-]+/i.test(s);
+    async function load(name) {
+      const src = "https://raw.githubusercontent.com/alexsimeonoww/ashwake-play/main/" + name + "?t=" + Date.now();
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 2500);
+      try {
+        const res = await fetch(src, { cache: "no-store", signal: ctrl.signal });
+        const text = (await res.text()).trim().split(/\s+/)[0];
+        if (res.ok && ok(text)) return text;
+      } catch {}
+      finally { clearTimeout(timer); }
+      return null;
+    }
+    Promise.all([load("url.txt"), load("backup.txt")]).then(([primary, backup]) => {
+      const play = document.getElementById("play");
+      const alt = document.getElementById("alt");
+      const next = primary || fallback;
+      play.href = next;
+      if (backup && backup !== next) {
+        alt.href = backup;
+        alt.hidden = false;
+      }
+    });
+  </script>
 </body>
 </html>
