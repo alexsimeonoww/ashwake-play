@@ -30,24 +30,47 @@
     const fallback = "https://earlier-configurations-jewish-specify.trycloudflare.com";
     const ok = (s) => /^https:\/\/[a-z0-9.-]+/i.test(s);
     async function load(name) {
-      const src = "https://raw.githubusercontent.com/alexsimeonoww/ashwake-play/main/" + name + "?t=" + Date.now();
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 2500);
-      try {
-        const res = await fetch(src, { cache: "no-store", signal: ctrl.signal });
-        const text = (await res.text()).trim().split(/\s+/)[0];
-        if (res.ok && ok(text)) return text;
-      } catch {}
-      finally { clearTimeout(timer); }
+      const sources = [
+        name + "?t=" + Date.now(),
+        "https://raw.githubusercontent.com/alexsimeonoww/ashwake-play/main/" + name + "?t=" + Date.now(),
+      ];
+      for (const src of sources) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 2500);
+        try {
+          const res = await fetch(src, { cache: "no-store", signal: ctrl.signal });
+          const text = (await res.text()).trim().split(/\s+/)[0];
+          if (res.ok && ok(text)) return text;
+        } catch {}
+        finally { clearTimeout(timer); }
+      }
       return null;
     }
-    Promise.all([load("url.txt"), load("backup.txt")]).then(([primary, backup]) => {
+    async function reachable(url) {
+      try {
+        await fetch(url, {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store",
+          signal: AbortSignal.timeout(4000),
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    Promise.all([load("url.txt"), load("backup.txt")]).then(async ([primary, backup]) => {
       const play = document.getElementById("play");
       const alt = document.getElementById("alt");
-      const next = primary || fallback;
-      play.href = next;
-      if (backup && backup !== next) {
-        alt.href = backup;
+      const candidates = [primary, backup, fallback].filter((u, i, a) => u && ok(u) && a.indexOf(u) === i);
+      let chosen = fallback;
+      for (const url of candidates) {
+        if (await reachable(url)) { chosen = url; break; }
+      }
+      play.href = chosen;
+      const other = candidates.find((u) => u !== chosen);
+      if (other) {
+        alt.href = other;
         alt.hidden = false;
       }
     });
