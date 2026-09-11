@@ -23,12 +23,12 @@
   <main>
     <h1>Ashwake</h1>
     <p class="muted">Tap Play. Keep this GitHub page — do not bookmark the next URL.</p>
-    <a id="play" class="play" href="https://productivity-hero-happy-destinations.trycloudflare.com" rel="noreferrer">Play</a>
+    <a id="play" class="play" href="https://0ed1e6d228dabe.lhr.life" rel="noreferrer">Play</a>
     <a id="alt" class="alt" hidden rel="noreferrer">If Play fails, tap this</a>
   </main>
   <script>
-    const fallback = "https://productivity-hero-happy-destinations.trycloudflare.com";
-    const ok = (s) => /^https:\/\/[a-z0-9.-]+/i.test(s);
+    const fallback = "https://0ed1e6d228dabe.lhr.life";
+    const ok = (s) => /^https:\\/\\/[a-z0-9.-]+/i.test(s);
     async function load(name) {
       const sources = [
         name + "?t=" + Date.now(),
@@ -39,7 +39,7 @@
         const timer = setTimeout(() => ctrl.abort(), 2500);
         try {
           const res = await fetch(src, { cache: "no-store", signal: ctrl.signal });
-          const text = (await res.text()).trim().split(/\s+/)[0];
+          const text = (await res.text()).trim().split(/\\s+/)[0];
           if (res.ok && ok(text)) return text;
         } catch {}
         finally { clearTimeout(timer); }
